@@ -1,0 +1,40 @@
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local players = game:GetService("Players")
+
+local event = Instance.new("RemoteEvent")
+event.Name = "ShowImageAndSound"
+event.Parent = replicatedStorage
+
+local function showToAllPlayers(imageId, soundId)
+    for _, player in pairs(players:GetPlayers()) do
+        local screenGui = Instance.new("ScreenGui")
+        local imageLabel = Instance.new("ImageLabel")
+        local sound = Instance.new("Sound")
+        
+        screenGui.Parent = player:WaitForChild("PlayerGui")
+        
+        imageLabel.Parent = screenGui
+        imageLabel.Size = UDim2.new(0.5, 0, 0.5, 0) -- Adjust size
+        imageLabel.Position = UDim2.new(0.25, 0, 0.25, 0) -- Center on screen
+        imageLabel.Image = imageId
+        
+        sound.Parent = screenGui
+        sound.SoundId = soundId
+        sound.Volume = 200
+        sound.Looped = true
+        sound:Play()
+        
+        task.wait(10) -- Adjust duration as needed
+        screenGui:Destroy()
+    end
+end
+
+local imageAssetId = "rbxassetid://<135976398870324>" -- Replace with Image Asset ID
+local soundAssetId = "rbxassetid://<139842731370151>" -- Replace with Sound Asset ID
+
+showToAllPlayers(imageAssetId, soundAssetId)
+
+players.PlayerAdded:Connect(function(player)
+    task.wait(1) -- Wait for PlayerGui to load
+    showToAllPlayers(imageAssetId, soundAssetId)
+end)
